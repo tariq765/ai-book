@@ -95,7 +95,7 @@ const config = {
         logo: {
           alt: 'AI Engineering Handbook Logo',
           src: 'img/logo.svg',
-          srcDark: 'img/logo-dark.svg',
+          srcDark: 'img/logo.svg',
           href: '/',
           width: 32,
           height: 32,
@@ -230,7 +230,7 @@ const config = {
   customFields: {
     bookTitle: 'The AI Engineering Handbook',
     bookSubtitle: 'From Artificial Intelligence to Agentic AI, RAG, MCP and Physical AI',
-    backendUrl: process.env.REACT_APP_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || '',
+    backendUrl: process.env.REACT_APP_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'https://tariq761-ai-book.hf.space',
   },
 
 

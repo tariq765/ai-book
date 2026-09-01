@@ -10,7 +10,7 @@ interface Message {
 
 export default function ChatBot(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
-  const BACKEND_URL = (siteConfig.customFields?.backendUrl as string) || 'http://localhost:8000';
+  const BACKEND_URL = (siteConfig.customFields?.backendUrl as string) || 'https://tariq761-ai-book.hf.space';
   const [isOpen, setIsOpen] = useState(false);
 
   const [messages, setMessages] = useState<Message[]>([
