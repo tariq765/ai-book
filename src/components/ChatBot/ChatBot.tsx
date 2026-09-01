@@ -48,10 +48,31 @@ export default function ChatBot(): JSX.Element {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/chat/stream`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question, top_k: 5 }),
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      let streamUrl = '';
+      try {
+        const initResp = await fetch(`${BACKEND_URL}/gradio_api/call/respond`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: [question, []] }),
+        });
+        if (initResp.ok) {
+          const initData = await initResp.json();
+          if (initData.event_id) {
+            streamUrl = `${BACKEND_URL}/gradio_api/call/respond/${initData.event_id}`;
+          }
+        }
+      } catch (e) {
+        // fallback to /api/chat/stream
+      }
+
+      const response = await fetch(streamUrl || `${BACKEND_URL}/api/chat/stream`, {
+        method: streamUrl ? 'GET' : 'POST',
+        headers: streamUrl
+          ? { Accept: 'text/event-stream' }
+          : { 'Content-Type': 'application/json' },
+        body: streamUrl ? undefined : JSON.stringify({ question, top_k: 5 }),
       });
 
       if (!response.ok) {
@@ -61,9 +82,6 @@ export default function ChatBot(): JSX.Element {
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let assistantContent = '';
-
-      // Add empty assistant message
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
       if (reader) {
         while (true) {
@@ -75,9 +93,18 @@ export default function ChatBot(): JSX.Element {
 
           for (const line of lines) {
             if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') break;
-              assistantContent += data;
+              const dataStr = line.slice(6).trim();
+              if (dataStr === '[DONE]') break;
+              try {
+                const parsed = JSON.parse(dataStr);
+                if (Array.isArray(parsed) && typeof parsed[0] === 'string') {
+                  assistantContent = parsed[0];
+                } else if (typeof parsed === 'string') {
+                  assistantContent += parsed;
+                }
+              } catch {
+                assistantContent += dataStr;
+              }
               setMessages(prev => {
                 const updated = [...prev];
                 updated[updated.length - 1] = {
@@ -93,10 +120,10 @@ export default function ChatBot(): JSX.Element {
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [
-        ...prev,
+        ...prev.slice(0, -1),
         {
           role: 'assistant',
-          content: '❌ Sorry, kuch gadbad ho gayi. Please check karein ke backend server chal raha hai (http://localhost:8000).',
+          content: '❌ Maazrat, backend se rabta nahi ho saka. Please dobara koshish karein.',
         },
       ]);
     } finally {
