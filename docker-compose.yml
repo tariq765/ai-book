@@ -1,0 +1,24 @@
+﻿services:
+  backend:
+    build:
+      context: ./chatbot-backend
+      dockerfile: Dockerfile
+    container_name: ai-book-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./chatbot-backend/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-book-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend

@@ -1,0 +1,11 @@
+﻿node_modules
+build
+.docusaurus
+chatbot-backend
+.git
+.gitignore
+.env
+.env.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
