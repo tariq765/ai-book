@@ -52,7 +52,7 @@ export default function ChatBot(): JSX.Element {
 
       let streamUrl = '';
       try {
-        const initResp = await fetch(`${BACKEND_URL}/gradio_api/call/respond`, {
+        const initResp = await fetch(`${BACKEND_URL}/gradio_api/call/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: [question, []] }),
@@ -60,7 +60,7 @@ export default function ChatBot(): JSX.Element {
         if (initResp.ok) {
           const initData = await initResp.json();
           if (initData.event_id) {
-            streamUrl = `${BACKEND_URL}/gradio_api/call/respond/${initData.event_id}`;
+            streamUrl = `${BACKEND_URL}/gradio_api/call/chat/${initData.event_id}`;
           }
         }
       } catch (e) {
