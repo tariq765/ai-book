@@ -1,15 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './ChatBot.module.css';
+
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-const BACKEND_URL = 'http://localhost:8000';
-
 export default function ChatBot(): JSX.Element {
+  const { siteConfig } = useDocusaurusContext();
+  const BACKEND_URL = (siteConfig.customFields?.backendUrl as string) || 'http://localhost:8000';
   const [isOpen, setIsOpen] = useState(false);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',

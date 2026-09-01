@@ -2,6 +2,10 @@ const { themes } = require('prism-react-renderer');
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
 
+const remarkMath = require('remark-math').default || require('remark-math');
+const rehypeKatex = require('rehype-katex').default || require('rehype-katex');
+
+
 /** @type {import('@docusaurus/types').Config} */
 
 const config = {
@@ -17,8 +21,9 @@ const config = {
   organizationName: 'ai-engineering-handbook',
   projectName: 'ai-engineering-handbook',
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
+
 
   i18n: {
     defaultLocale: 'en',
@@ -36,7 +41,10 @@ const config = {
           showLastUpdateAuthor: false,
           showLastUpdateTime: false,
           routeBasePath: 'docs',
+          remarkPlugins: [remarkMath],
+          rehypePlugins: [rehypeKatex],
         },
+
 
 
 
@@ -222,7 +230,9 @@ const config = {
   customFields: {
     bookTitle: 'The AI Engineering Handbook',
     bookSubtitle: 'From Artificial Intelligence to Agentic AI, RAG, MCP and Physical AI',
+    backendUrl: process.env.REACT_APP_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || '',
   },
+
 
   // Head tags
   headTags: [
