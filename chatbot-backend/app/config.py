@@ -1,4 +1,4 @@
-﻿import os
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,7 +17,10 @@ class Settings:
         "http://localhost:3000",
         "http://localhost:3001",
         "https://ai-engineering-handbook.com",
+        "https://ai-book-tariq765s-projects.vercel.app",
+        "*",
     ]
+
 
 
 settings = Settings()
