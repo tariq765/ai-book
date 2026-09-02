@@ -11,6 +11,7 @@ interface Message {
 export default function ChatBot(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   const BACKEND_URL = (siteConfig.customFields?.backendUrl as string) || 'https://tariq761-ai-book.hf.space';
+  const HF_TOKEN = (siteConfig.customFields?.hfToken as string) || '';
   const [isOpen, setIsOpen] = useState(false);
 
   const [messages, setMessages] = useState<Message[]>([
@@ -50,11 +51,18 @@ export default function ChatBot(): JSX.Element {
     try {
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
+      const authHeaders: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (HF_TOKEN) {
+        authHeaders['Authorization'] = `Bearer ${HF_TOKEN}`;
+      }
+
       let streamUrl = '';
       try {
         const initResp = await fetch(`${BACKEND_URL}/gradio_api/call/chat`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders,
           body: JSON.stringify({ data: [question, []] }),
         });
         if (initResp.ok) {
@@ -67,11 +75,16 @@ export default function ChatBot(): JSX.Element {
         // fallback to /api/chat/stream
       }
 
+      const streamHeaders: Record<string, string> = streamUrl
+        ? { Accept: 'text/event-stream' }
+        : { 'Content-Type': 'application/json' };
+      if (HF_TOKEN) {
+        streamHeaders['Authorization'] = `Bearer ${HF_TOKEN}`;
+      }
+
       const response = await fetch(streamUrl || `${BACKEND_URL}/api/chat/stream`, {
         method: streamUrl ? 'GET' : 'POST',
-        headers: streamUrl
-          ? { Accept: 'text/event-stream' }
-          : { 'Content-Type': 'application/json' },
+        headers: streamHeaders,
         body: streamUrl ? undefined : JSON.stringify({ question, top_k: 5 }),
       });
 

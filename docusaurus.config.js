@@ -231,6 +231,7 @@ const config = {
     bookTitle: 'The AI Engineering Handbook',
     bookSubtitle: 'From Artificial Intelligence to Agentic AI, RAG, MCP and Physical AI',
     backendUrl: process.env.REACT_APP_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'https://tariq761-ai-book.hf.space',
+    hfToken: process.env.REACT_APP_HF_TOKEN || process.env.NEXT_PUBLIC_HF_TOKEN || '',
   },
 
 
